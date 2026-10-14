@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chúc Mừng Ngày Phụ Nữ Việt Nam 20/10 - Cánh Đồng Hướng Dương</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Great+Vibes&family=Plus+Jakarta+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #12060c;
+        }
+
+        .font-card-title {
+            font-family: 'Great Vibes', cursive;
+        }
+
+        .font-card-body {
+            font-family: 'Dancing Script', cursive;
+        }
+
+        /* Glassmorphism Panel */
+        .glass-panel {
+            background: rgba(25, 12, 20, 0.55);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 180, 120, 0.25);
+            box-shadow: 0 16px 48px 0 rgba(0, 0, 0, 0.55);
+        }
+
+        .glass-card {
+            background: rgba(30, 14, 22, 0.65);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 215, 150, 0.35);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(255, 170, 51, 0.15);
+        }
+
+        /* Golden Glowing Text Effect */
+        .glow-text-gold {
+            color: #fff2c6;
+            text-shadow: 0 0 10px rgba(255, 200, 80, 0.8), 0 0 22px rgba(255, 140, 0, 0.6), 0 0 35px rgba(255, 100, 0, 0.4);
+        }
+
+        .glow-text-title {
+            background: linear-gradient(135deg, #fff5d0 0%, #ffca3a 50%, #ff9233 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 12px rgba(255, 180, 50, 0.7));
+        }
+
+        /* Custom Range Slider */
+        input[type=range] {
+            -webkit-appearance: none;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            height: 5px;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #ffaa33;
+            cursor: pointer;
+            box-shadow: 0 0 12px rgba(255, 170, 51, 0.9);
+            transition: transform 0.15s ease;
+        }
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.25);
+        }
+
+        canvas {
+            display: block;
+            touch-action: none;
+        }
+
+        /* Fade Animation for Wishes */
+        .wish-transition {
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        .wish-hidden {
+            opacity: 0;
+            transform: translateY(8px) scale(0.98);
+        }
+    </style>
+</head>
+<body class="relative w-full h-full text-white">
+
+    <!-- Interactive Canvas Background -->
+    <canvas id="sunflowerCanvas" class="absolute inset-0 w-full h-full z-0"></canvas>
+
+    <!-- Top Action Buttons Bar -->
+    <div class="absolute top-5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2.5 sm:gap-4 max-w-[95%]">
+        <button id="toggleWishBtn" class="glass-panel px-4 py-2 rounded-full text-amber-200 hover:text-white text-xs sm:text-sm font-medium flex items-center gap-2 hover:border-amber-400/50 transition active:scale-95 shadow-lg">
+            <i class="fa-solid fa-heart text-rose-400 animate-pulse"></i>
+            <span id="wishBtnText">Ẩn lời chúc</span>
+        </button>
+
+        <button id="nextWishBtn" class="glass-panel px-4 py-2 rounded-full text-amber-200 hover:text-white text-xs sm:text-sm font-medium flex items-center gap-2 hover:border-amber-400/50 transition active:scale-95 shadow-lg">
+            <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i>
+            <span>Những lời chúc của mình dành cho cậu</span>
+        </button>
+
+        <button id="musicBtn" class="glass-panel px-4 py-2 rounded-full text-amber-200 hover:text-white text-xs sm:text-sm font-medium flex items-center gap-2 hover:border-amber-400/50 transition active:scale-95 shadow-lg">
+            <i id="musicIcon" class="fa-solid fa-music text-amber-400"></i>
+            <span id="musicText">Một Đời</span>
+        </button>
+    </div>
+
+    <!-- Center 20/10 Greeting Card Overlay -->
+    <div id="greetingCard" class="absolute inset-0 z-10 flex items-center justify-center p-4 pointer-events-none transition-all duration-500 ease-out">
+        <div class="glass-card pointer-events-auto max-w-xl w-full rounded-3xl p-6 sm:p-10 text-center relative overflow-hidden border border-amber-300/30">
+            <!-- Decorative Corners -->
+            <div class="absolute top-3 left-4 text-amber-300/40 text-xl"><i class="fa-solid fa-sun opacity-60"></i></div>
+            <div class="absolute top-3 right-4 text-amber-300/40 text-xl"><i class="fa-solid fa-sun opacity-60"></i></div>
+            
+            <!-- Sunflower Badge Header -->
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-amber-500/20 border border-amber-400/40 mb-3 shadow-inner">
+                <i class="fa-solid fa-sun text-2xl text-amber-300 animate-spin-slow"></i>
+            </div>
+
+            <!-- Main Title -->
+            <h1 class="font-card-title text-4xl sm:text-6xl font-bold glow-text-title mb-2 tracking-wide leading-tight">
+                Happy Vietnamese Women's Day
+            </h1>
+            <p class="text-xs sm:text-sm font-semibold tracking-widest uppercase text-amber-200/90 mb-5 border-b border-amber-500/20 pb-3">
+                Gửi Tặng Cậu Nè 💖 
+            </p>
+
+            <!-- Dynamic Wish Content -->
+            <div id="wishContainer" class="wish-transition min-h-[110px] flex items-center justify-center px-2">
+                <p id="wishText" class="font-card-body text-2xl sm:text-3xl text-amber-100 leading-relaxed glow-text-gold">
+                    "Chúc cậu luôn rực rỡ, tự tin và tỏa sáng như những bông hoa hướng dương luôn vươn mình đón ánh mặt trời ấm áp!"
+                </p>
+            </div>
+
+            <!-- Footer Decorative Note -->
+            <div class="mt-6 pt-4 border-t border-amber-500/20 flex items-center justify-between text-[11px] sm:text-xs text-amber-200/70">
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-heart text-rose-400"></i> Dành tặng người con gái dễ thương này</span>
+                <span class="font-mono text-amber-300/80">20 / 10</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- UI Control Dashboard (Bottom) -->
+    <div id="controlPanel" class="glass-panel absolute bottom-5 left-1/2 transform -translate-x-1/2 rounded-2xl p-3.5 sm:p-4 text-white z-20 transition-all duration-300 ease-out max-w-lg w-[92%] sm:w-auto">
+        <div class="flex items-center justify-between gap-4 mb-2 pb-2 border-b border-amber-500/20">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-sliders text-amber-400 text-sm"></i>
+                <h2 class="font-semibold text-xs sm:text-sm text-amber-100 tracking-wide">Điều Chỉnh Cảnh Quan</h2>
+                <span id="fpsCounter" class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full border border-amber-500/30 font-mono">60 FPS</span>
+            </div>
+            <button id="toggleControlsBtn" class="text-[11px] bg-amber-500/20 hover:bg-amber-500/40 text-amber-200 px-2.5 py-1 rounded-full border border-amber-500/30 transition">
+                <i class="fa-solid fa-chevron-down" id="controlIcon"></i>
+            </button>
+        </div>
+
+        <div id="controlsBody" class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-amber-200/90 pt-1">
+            <div class="flex flex-col gap-1">
+                <div class="flex justify-between font-medium">
+                    <label for="windSpeed"><i class="fa-solid fa-wind mr-1"></i> Sức gió</label>
+                    <span id="windVal" class="text-amber-400">3.0</span>
+                </div>
+                <input type="range" id="windSpeed" min="0.1" max="3.0" step="0.1" value="3.0">
+            </div>
+
+            <div class="flex flex-col gap-1">
+                <div class="flex justify-between font-medium">
+                    <label for="sunGlow"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Ánh hoàng hôn</label>
+                    <span id="glowVal" class="text-amber-400">3.25</span>
+                </div>
+                <input type="range" id="sunGlow" min="0.3" max="3.25" step="0.1" value="3.25">
+            </div>
+
+            <div class="flex flex-col gap-1">
+                <div class="flex justify-between font-medium">
+                    <label for="particleDensity"><i class="fa-solid fa-sparkles mr-1"></i> Trái tim & Nắng</label>
+                    <span id="particleVal" class="text-amber-400">280</span>
+                </div>
+                <input type="range" id="particleDensity" min="30" max="280" step="10" value="280">
+            </div>
+        </div>
+    </div>
+
+    
+    <script>
+      
+        const wishes = [
+            "Chúc người con gái tôi yêu một ngày 20/10 ngập tràn nụ cười, bình an trong tâm hồn và luôn gặt hái được mọi điều mong ước!",
+            "Mong cậu luôn dịu dàng với chính mình, rạng rỡ theo cách riêng và vững vàng tỏa sáng trên mọi hành trình bạn chọn!",
+            "Cảm ơn sự hiện diện tuyệt vời của cậu đã làm cho tớ cảm thấy ấm áp và ngọt ngào hơn. Chúc mừng Ngày 20/10!",
+            "Chúc cậu ngày 20/10 nhận được thật nhiều hoa, nhiều quà và trọn vẹn những lời thương yêu chân thành nhất!",
+            "Mong cho mọi sự cố gắng của cậu đều được ghi nhận, mọi muộn phiền lùi xa và mỗi ngày trôi qua đều trọn vẹn niềm vui!"
+        ];
+
+        let currentWishIndex = 0;
+        const wishContainer = document.getElementById('wishContainer');
+        const wishText = document.getElementById('wishText');
+        const nextWishBtn = document.getElementById('nextWishBtn');
+        const toggleWishBtn = document.getElementById('toggleWishBtn');
+        const wishBtnText = document.getElementById('wishBtnText');
+        const greetingCard = document.getElementById('greetingCard');
+
+        let isCardVisible = true;
+
+        nextWishBtn.addEventListener('click', () => {
+            wishContainer.classList.add('wish-hidden');
+            setTimeout(() => {
+                currentWishIndex = (currentWishIndex + 1) % wishes.length;
+                wishText.textContent = `"${wishes[currentWishIndex]}"`;
+                wishContainer.classList.remove('wish-hidden');
+            }, 300);
+        });
+
+        toggleWishBtn.addEventListener('click', () => {
+            isCardVisible = !isCardVisible;
+            if (isCardVisible) {
+                greetingCard.style.opacity = '1';
+                greetingCard.style.transform = 'scale(1)';
+                greetingCard.style.pointerEvents = 'auto';
+                wishBtnText.textContent = 'Ẩn lời chúc';
+            } else {
+                greetingCard.style.opacity = '0';
+                greetingCard.style.transform = 'scale(0.92)';
+                greetingCard.style.pointerEvents = 'none';
+                wishBtnText.textContent = 'Hiện lời chúc';
+            }
+        });
+
+       
+const musicUrl = 'https://www.dropbox.com/scl/fi/jszam0wa663h24tkp097e/m-t-i.mp3?rlkey=fl4q34834ong7uwqqwyk4drlq&st=ysq1pnq9&raw=1'; 
+
+const myAudio = new Audio(musicUrl);
+myAudio.loop = true; // Phát lặp lại
+
+let isPlayingMusic = false;
+const musicBtn = document.getElementById('musicBtn');
+const musicIcon = document.getElementById('musicIcon');
+const musicText = document.getElementById('musicText');
+
+// Hàm bật nhạc
+function startAudio() {
+    if (!isPlayingMusic) {
+        myAudio.play().then(() => {
+            isPlayingMusic = true;
+            musicIcon.className = "fa-solid fa-volume-high text-purple-300 animate-pulse";
+            musicText.textContent = "Dừng nhạc";
+        }).catch(err => {
+            console.log("Chờ người dùng tương tác để phát nhạc.");
+        });
+    }
+}
+
+// Hàm tắt nhạc
+function stopAudio() {
+    myAudio.pause();
+    isPlayingMusic = false;
+    musicIcon.className = "fa-solid fa-music text-purple-300";
+    musicText.textContent = "Một Đời";
+}
+
+// Tự động phát khi người dùng chạm/click vào bất kỳ đâu trên trang
+function handleFirstInteraction() {
+    startAudio();
+    window.removeEventListener('click', handleFirstInteraction);
+    window.removeEventListener('touchstart', handleFirstInteraction);
+}
+
+window.addEventListener('click', handleFirstInteraction);
+window.addEventListener('touchstart', handleFirstInteraction);
+
+// Xử lý khi nhấn nút Bật/Dừng nhạc
+musicBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (isPlayingMusic) {
+        stopAudio();
+    } else {
+        startAudio();
+    }
+});
+
+      
+        const canvas = document.getElementById('sunflowerCanvas');
+        const ctx = canvas.getContext('2d', { alpha: false });
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        const mouse = {
+            x: width / 2,
+            y: height / 2,
+            targetX: width / 2,
+            targetY: height / 2,
+            parallaxX: 0,
+            parallaxY: 0,
+            touchRadius: 240
+        };
+
+        const params = {
+            windSpeed: 3.0,
+            sunGlow: 3.25,
+            particleDensity: 280,
+            time: 0
+        };
+
+        // Offscreen Sprite Cache for 60-120 FPS
+        const flowerSpriteCache = new Map();
+
+        function getOrCreateSunflowerSprite(scaleBucket, depth) {
+            const key = `${scaleBucket.toFixed(2)}_${(depth > 0.6 ? 'near' : 'far')}`;
+            if (flowerSpriteCache.has(key)) {
+                return flowerSpriteCache.get(key);
+            }
+
+            const scale = scaleBucket;
+            const headRadius = (16 + scale * 8) * scale;
+            const petalLength = (22 + scale * 10) * scale;
+            const size = Math.ceil((headRadius + petalLength) * 2 + 20);
+
+            const offCanvas = document.createElement('canvas');
+            offCanvas.width = size;
+            offCanvas.height = size;
+            const oCtx = offCanvas.getContext('2d');
+
+            const cx = size / 2;
+            const cy = size / 2;
+
+            // Draw Double Layer Petals
+            const petalCount = 22;
+            for (let layer = 0; layer < 2; layer++) {
+                const count = petalCount + (layer * 4);
+                const layerScale = layer === 0 ? 1 : 0.82;
+                
+                for (let i = 0; i < count; i++) {
+                    const angle = (i / count) * Math.PI * 2 + (layer * 0.1);
+                    oCtx.save();
+                    oCtx.translate(cx, cy);
+                    oCtx.rotate(angle);
+
+                    const petalGrad = oCtx.createLinearGradient(0, 0, 0, -petalLength * layerScale);
+                    petalGrad.addColorStop(0, '#e65100');
+                    petalGrad.addColorStop(0.35, '#ff8f00');
+                    petalGrad.addColorStop(1, '#ffeb3b');
+
+                    oCtx.fillStyle = petalGrad;
+                    oCtx.beginPath();
+                    oCtx.moveTo(0, -headRadius * 0.7);
+                    oCtx.quadraticCurveTo(8 * scale * layerScale, -headRadius - petalLength * 0.5 * layerScale, 0, -headRadius - petalLength * layerScale);
+                    oCtx.quadraticCurveTo(-8 * scale * layerScale, -headRadius - petalLength * 0.5 * layerScale, 0, -headRadius * 0.7);
+                    oCtx.fill();
+
+                    oCtx.restore();
+                }
+            }
+
+            // Seed Disc
+            const centerGrad = oCtx.createRadialGradient(cx, cy, 2, cx, cy, headRadius);
+            centerGrad.addColorStop(0, '#100402');
+            centerGrad.addColorStop(0.7, '#2a0d04');
+            centerGrad.addColorStop(1, '#4e1e08');
+
+            oCtx.beginPath();
+            oCtx.arc(cx, cy, headRadius, 0, Math.PI * 2);
+            oCtx.fillStyle = centerGrad;
+            oCtx.fill();
+
+            // Highlight Rim
+            oCtx.beginPath();
+            oCtx.arc(cx, cy, headRadius + 0.5, Math.PI * 0.8, Math.PI * 1.8);
+            oCtx.strokeStyle = 'rgba(255, 230, 160, 0.4)';
+            oCtx.lineWidth = Math.max(1, 1.5 * scale);
+            oCtx.stroke();
+
+            const spriteData = { canvas: offCanvas, halfSize: size / 2 };
+            flowerSpriteCache.set(key, spriteData);
+            return spriteData;
+        }
+
+        class Sunflower {
+            constructor(x, y, scale, depth) {
+                this.x = x;
+                this.y = y;
+                this.scale = scale;
+                this.depth = depth;
+
+                this.stemHeight = (110 + Math.random() * 70) * scale;
+                this.angle = (Math.random() - 0.5) * 0.08;
+                this.angularVelocity = 0;
+                this.phaseOffset = Math.random() * Math.PI * 2;
+
+                const bucket = Math.round(scale * 18) / 18;
+                this.sprite = getOrCreateSunflowerSprite(bucket, depth);
+            }
+
+            update(dt) {
+                const windForce = Math.sin(params.time * 2.2 + this.phaseOffset + this.x * 0.004) * 0.035 * params.windSpeed;
+                
+                const headX = this.x + mouse.parallaxX * this.depth;
+                const headY = this.y - this.stemHeight;
+                const dx = mouse.x - headX;
+                const dy = mouse.y - headY;
+                const distSq = dx * dx + dy * dy;
+                const maxDist = mouse.touchRadius * this.scale;
+
+                let touchForce = 0;
+                if (distSq < maxDist * maxDist) {
+                    const dist = Math.sqrt(distSq);
+                    const force = (1 - dist / maxDist);
+                    touchForce = (dx > 0 ? -1 : 1) * force * 0.18;
+                }
+
+                const targetAngle = windForce + touchForce;
+                const accel = (targetAngle - this.angle) * 25.0;
+                this.angularVelocity += accel * dt;
+                this.angularVelocity *= Math.pow(0.85, dt * 60);
+                this.angle += this.angularVelocity * dt;
+            }
+
+            draw(parallaxX, parallaxY) {
+                const px = this.x + parallaxX * this.depth;
+                const py = this.y + parallaxY * this.depth;
+
+                const topX = px + Math.sin(this.angle) * this.stemHeight;
+                const topY = py - Math.cos(this.angle) * this.stemHeight;
+
+                // Stem
+                ctx.beginPath();
+                ctx.moveTo(px, py);
+                ctx.quadraticCurveTo(px + (topX - px) * 0.4, py + (topY - py) * 0.5, topX, topY);
+                ctx.strokeStyle = `hsl(90, 38%, ${10 + this.depth * 20}%)`;
+                ctx.lineWidth = Math.max(1.5, 5 * this.scale);
+                ctx.stroke();
+
+                // Sunflower Head
+                ctx.save();
+                ctx.translate(topX, topY);
+                ctx.rotate(this.angle - 0.12);
+                ctx.drawImage(this.sprite.canvas, -this.sprite.halfSize, -this.sprite.halfSize);
+                ctx.restore();
+            }
+        }
+
+        /* Ambient Bokeh Particles & Floating Hearts for 20/10 */
+        class RomanticParticle {
+            constructor() {
+                this.reset();
+                this.y = Math.random() * height;
+            }
+
+            reset() {
+                this.x = Math.random() * width;
+                this.y = height + 20;
+                this.size = 1.5 + Math.random() * 4.0;
+                this.speedY = -(0.25 + Math.random() * 0.5);
+                this.speedX = (Math.random() - 0.5) * 0.35;
+                this.alpha = 0.15 + Math.random() * 0.65;
+                this.isHeart = Math.random() < 0.28; // 28% particles are floating hearts
+                this.rotation = Math.random() * Math.PI * 2;
+                this.rotSpeed = (Math.random() - 0.5) * 0.03;
+            }
+
+            update(dt) {
+                this.y += this.speedY * dt * 60;
+                this.x += (this.speedX + Math.sin(params.time * 2 + this.y * 0.01) * 0.25 * params.windSpeed) * dt * 60;
+                this.rotation += this.rotSpeed;
+
+                if (this.y < height * 0.15 || this.x < -20 || this.x > width + 20) {
+                    this.reset();
+                }
+            }
+
+            draw(parallaxX, parallaxY) {
+                const px = this.x + parallaxX * 0.7;
+                const py = this.y + parallaxY * 0.7;
+
+                ctx.save();
+                ctx.translate(px, py);
+
+                if (this.isHeart) {
+                    ctx.rotate(this.rotation);
+                    const hSize = this.size * 2.2;
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.bezierCurveTo(-hSize, -hSize, -hSize * 1.5, hSize * 0.5, 0, hSize * 1.5);
+                    ctx.bezierCurveTo(hSize * 1.5, hSize * 0.5, hSize, -hSize, 0, 0);
+                    ctx.fillStyle = `rgba(255, 120, 150, ${this.alpha * params.sunGlow * 0.85})`;
+                    ctx.fill();
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `hsla(42, 100%, 72%, ${this.alpha * params.sunGlow})`;
+                    ctx.fill();
+                }
+
+                ctx.restore();
+            }
+        }
+
+        let sunflowers = [];
+        let particles = [];
+        let skyCanvas;
+
+        function preRenderSky() {
+            skyCanvas = document.createElement('canvas');
+            skyCanvas.width = width;
+            skyCanvas.height = height;
+            const sCtx = skyCanvas.getContext('2d');
+
+            const grad = sCtx.createLinearGradient(0, 0, 0, height * 0.65);
+            grad.addColorStop(0.0, '#261220');
+            grad.addColorStop(0.25, '#612a3d');
+            grad.addColorStop(0.55, '#ba5540');
+            grad.addColorStop(0.80, '#e08f50');
+            grad.addColorStop(1.0, '#f0b86e');
+
+            sCtx.fillStyle = grad;
+            sCtx.fillRect(0, 0, width, height);
+        }
+
+        function initScene() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+
+            flowerSpriteCache.clear();
+            preRenderSky();
+
+            particles = [];
+            for (let i = 0; i < params.particleDensity; i++) {
+                particles.push(new RomanticParticle());
+            }
+
+            sunflowers = [];
+            const horizonY = height * 0.46;
+            const flowerCount = Math.floor(Math.min(width, 1600) * 0.28);
+
+            for (let i = 0; i < flowerCount; i++) {
+                const depth = Math.pow(Math.random(), 2.1);
+                const y = horizonY + depth * (height - horizonY + 30);
+                const x = Math.random() * (width + 160) - 80;
+                const scale = 0.16 + depth * 1.05;
+
+                sunflowers.push(new Sunflower(x, y, scale, depth));
+            }
+
+            sunflowers.sort((a, b) => a.depth - b.depth);
+        }
+
+        function drawSunAndRays(parallaxX, parallaxY) {
+            const sunX = width * 0.14 + parallaxX * 0.12;
+            const sunY = height * 0.19 + parallaxY * 0.12;
+            const sunRadius = 65;
+
+            const glowGrad = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, sunRadius * 5.5);
+            glowGrad.addColorStop(0, `rgba(255, 248, 220, ${0.9 * params.sunGlow})`);
+            glowGrad.addColorStop(0.25, `rgba(255, 175, 90, ${0.55 * params.sunGlow})`);
+            glowGrad.addColorStop(0.6, `rgba(210, 90, 70, ${0.2 * params.sunGlow})`);
+            glowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+            ctx.fillStyle = glowGrad;
+            ctx.beginPath();
+            ctx.arc(sunX, sunY, sunRadius * 5.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.arc(sunX, sunY, sunRadius, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+
+            // God Rays
+            ctx.save();
+            ctx.globalCompositeOperation = 'screen';
+            const rayCount = 7;
+            for (let i = 0; i < rayCount; i++) {
+                const angle = 0.25 + (i / rayCount) * Math.PI * 0.75 + Math.sin(params.time * 0.5 + i) * 0.015;
+                const rayWidth = 0.12 + Math.sin(i * 1.8) * 0.04;
+
+                const rayGrad = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, Math.max(width, height) * 1.1);
+                rayGrad.addColorStop(0, `rgba(255, 230, 170, ${0.22 * params.sunGlow})`);
+                rayGrad.addColorStop(0.8, `rgba(255, 130, 70, ${0.04 * params.sunGlow})`);
+                rayGrad.addColorStop(1, 'rgba(0,0,0,0)');
+
+                ctx.beginPath();
+                ctx.moveTo(sunX, sunY);
+                ctx.arc(sunX, sunY, Math.max(width, height) * 1.1, angle - rayWidth, angle + rayWidth);
+                ctx.closePath();
+                ctx.fillStyle = rayGrad;
+                ctx.fill();
+            }
+            ctx.restore();
+        }
+
+        function drawHorizonAndGround(parallaxX, parallaxY) {
+            const horizonY = height * 0.46 + parallaxY * 0.25;
+
+            ctx.fillStyle = '#210b14';
+            ctx.beginPath();
+            ctx.moveTo(0, horizonY);
+            for (let x = 0; x <= width; x += 16) {
+                const h = 10 + Math.sin(x * 0.02) * 6 + Math.cos(x * 0.05) * 4;
+                ctx.lineTo(x + parallaxX * 0.15, horizonY - h);
+            }
+            ctx.lineTo(width, height);
+            ctx.lineTo(0, height);
+            ctx.fill();
+
+            const groundGrad = ctx.createLinearGradient(0, horizonY, 0, height);
+            groundGrad.addColorStop(0, '#261108');
+            groundGrad.addColorStop(1, '#080201');
+
+            ctx.fillStyle = groundGrad;
+            ctx.fillRect(0, horizonY, width, height - horizonY);
+        }
+
+        let lastTime = performance.now();
+        let frameCount = 0;
+        let lastFpsUpdate = performance.now();
+
+        function animate(currentTime) {
+            const dt = Math.min((currentTime - lastTime) / 1000, 0.033);
+            lastTime = currentTime;
+
+            params.time += dt;
+
+            frameCount++;
+            if (currentTime - lastFpsUpdate >= 1000) {
+                document.getElementById('fpsCounter').textContent = `${frameCount} FPS`;
+                frameCount = 0;
+                lastFpsUpdate = currentTime;
+            }
+
+            mouse.x += (mouse.targetX - mouse.x) * (dt * 8);
+            mouse.y += (mouse.targetY - mouse.y) * (dt * 8);
+
+            mouse.parallaxX = ((mouse.x / width) - 0.5) * 40;
+            mouse.parallaxY = ((mouse.y / height) - 0.5) * 24;
+
+            ctx.drawImage(skyCanvas, 0, 0);
+            drawSunAndRays(mouse.parallaxX, mouse.parallaxY);
+            drawHorizonAndGround(mouse.parallaxX, mouse.parallaxY);
+
+            for (let i = 0; i < sunflowers.length; i++) {
+                sunflowers[i].update(dt);
+                sunflowers[i].draw(mouse.parallaxX, mouse.parallaxY);
+            }
+
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update(dt);
+                particles[i].draw(mouse.parallaxX, mouse.parallaxY);
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', () => {
+            initScene();
+        });
+
+        const updateMousePos = (x, y) => {
+            mouse.targetX = x;
+            mouse.targetY = y;
+        };
+
+        window.addEventListener('mousemove', (e) => updateMousePos(e.clientX, e.clientY));
+        window.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 0) {
+                updateMousePos(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: true });
+
+        // Controls Input Events
+        document.getElementById('windSpeed').addEventListener('input', (e) => {
+            params.windSpeed = parseFloat(e.target.value);
+            document.getElementById('windVal').textContent = params.windSpeed.toFixed(1);
+        });
+
+        document.getElementById('sunGlow').addEventListener('input', (e) => {
+            params.sunGlow = parseFloat(e.target.value);
+            document.getElementById('glowVal').textContent = params.sunGlow.toFixed(1);
+        });
+
+        document.getElementById('particleDensity').addEventListener('input', (e) => {
+            params.particleDensity = parseInt(e.target.value);
+            document.getElementById('particleVal').textContent = params.particleDensity;
+            
+            while (particles.length < params.particleDensity) {
+                particles.push(new RomanticParticle());
+            }
+            if (particles.length > params.particleDensity) {
+                particles.length = params.particleDensity;
+            }
+        });
+
+        const toggleControlsBtn = document.getElementById('toggleControlsBtn');
+        const controlsBody = document.getElementById('controlsBody');
+        const controlIcon = document.getElementById('controlIcon');
+        let controlsExpanded = false;
+        controlsBody.style.display = 'none';
+        controlIcon.className = 'fa-solid fa-chevron-up';
+
+        toggleControlsBtn.addEventListener('click', () => {
+            controlsExpanded = !controlsExpanded;
+            controlsBody.style.display = controlsExpanded ? 'grid' : 'none';
+            controlIcon.className = controlsExpanded ? 'fa-solid fa-chevron-down' : 'fa-solid fa-chevron-up';
+        });
+
+        // Initialize Engine
+        window.onload = () => {
+            initScene();
+            requestAnimationFrame((t) => {
+                lastTime = t;
+                animate(t);
+            });
+        };
+    </script>
+</body>
+</html>
